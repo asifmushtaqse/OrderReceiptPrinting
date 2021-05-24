@@ -25,7 +25,7 @@ class ApiService {
         val reader = BufferedReader(InputStreamReader(input))
         val jsonString = reader.readLine()
         val json = Klaxon().parseArray<OrderDetail>(jsonString)
-//        handleImages(json)
+        handleImages(json)
         printOrders(json)
         return json as ArrayList<OrderDetail>
     }
