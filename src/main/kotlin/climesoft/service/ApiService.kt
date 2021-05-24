@@ -25,7 +25,7 @@ class ApiService {
         val reader = BufferedReader(InputStreamReader(input))
         val jsonString = reader.readLine()
         val json = Klaxon().parseArray<OrderDetail>(jsonString)
-        handleImages(json)
+//        handleImages(json)
         printOrders(json)
         return json as ArrayList<OrderDetail>
     }
@@ -55,18 +55,23 @@ class ApiService {
 
     private fun downloadImages(orders: List<OrderDetail>?){
         orders?.forEach { orderDetail ->
-            orderDetail.product.forEach { product ->
-                product.uploads.forEach { upload ->
-                    val mainDir = (orderDetail.id + orderDetail.others.dirSuffix)
-                    val productDir = "x${upload.quantity} ${product.name}"
-                    val finalDir = "$mainDir/$productDir"
-                    saveImage(finalDir, upload.image!!)
-                }
+            downloadOrderImages(orderDetail)
+        }
+    }
+
+    fun downloadOrderImages(orderDetail: OrderDetail, forcefully: Boolean = false){
+        orderDetail.product.forEach { product ->
+            product.uploads.forEach { upload ->
+                val mainDir = (orderDetail.id + orderDetail.others.dirSuffix)
+                val productDir = "x${upload.quantity} ${product.name}"
+                val finalDir = "$mainDir/$productDir"
+                println(upload.image)
+                upload.image?.let { saveImage(finalDir, it, forcefully) }
             }
         }
     }
 
-    private fun saveImage(folder: String, imageLink: String){
+    private fun saveImage(folder: String, imageLink: String, forcefully: Boolean = false){
         val folderPath = configuration.getRootPath() + folder
 
         val directory = File(folderPath)
@@ -75,16 +80,25 @@ class ApiService {
         }
         val fileName = imageLink.substring(imageLink.lastIndexOf('/') + 1);
         val filePath = File("$folderPath/$fileName")
-        saveImageToDisk(imageLink, filePath)
+        saveImageToDisk(imageLink, filePath, forcefully)
     }
 
-    private fun saveImageToDisk(imageLink: String, filePath: File){
+    private fun saveImageToDisk(imageLink: String, filePath: File, forcefully: Boolean = false){
         if(Files.notExists(Paths.get(filePath.absolutePath))) {
             getConnectFromUrl(imageLink).use { inputStream ->
                 Files.copy(
                         inputStream,
                         Paths.get(filePath.absolutePath),
                         StandardCopyOption.REPLACE_EXISTING
+                )
+            }
+        }
+        if(forcefully){
+            getConnectFromUrl(imageLink).use { inputStream ->
+                Files.copy(
+                    inputStream,
+                    Paths.get(filePath.absolutePath),
+                    StandardCopyOption.REPLACE_EXISTING
                 )
             }
         }

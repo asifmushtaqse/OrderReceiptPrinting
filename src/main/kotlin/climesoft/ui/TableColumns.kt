@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import climesoft.modal.OrderDetail
+import climesoft.service.ApiService
 import climesoft.service.PrintingService
 import climesoft.util.Configuration
 import java.awt.Desktop
@@ -92,12 +93,16 @@ class TableColumns {
                     } else {
                         val orderItem = tableView.items[index]
                         btnTicket.onAction = EventHandler {
-                            PrintingService.instance.prepareReceipt(orderItem!!)
+                            PrintingService.instance.prepareReceipt(orderItem!!, true)
                         }
                         btnFolder.onAction = EventHandler {
                             Desktop.getDesktop().open(File(Configuration.instance.getRootPath() + "/${orderItem?.id}${orderItem?.others?.dirSuffix}"))
                         }
-                        btnImages.onAction = EventHandler { }
+                        btnImages.onAction = EventHandler {
+                            if (orderItem != null) {
+                                ApiService().downloadOrderImages(orderItem, true)
+                            }
+                        }
                         graphic = vBox
                     }
                     text = null

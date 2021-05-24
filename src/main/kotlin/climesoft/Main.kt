@@ -14,6 +14,7 @@ class Main: Application() {
         primaryStage.title = "Order Printing"
         primaryStage.scene = scene
         scene.stylesheets.add(javaClass.getResource("/stylesheet.css").toExternalForm())
+        primaryStage.isMaximized = true
         primaryStage.show()
     }
 

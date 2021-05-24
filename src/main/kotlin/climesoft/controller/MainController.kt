@@ -48,10 +48,6 @@ class MainController {
     }
 
     init {
-//        GlobalScope.launch(Dispatchers.IO) {
-
-//            ordersTable?.refresh()
-//        }
         GlobalScope.launch(Dispatchers.IO) {
             refreshOrders()
         }
@@ -59,14 +55,14 @@ class MainController {
 
     private suspend fun refreshOrders(){
         while(true) {
+            delay(TimeUnit.MINUTES.toMillis(configuration.getRefreshTime()))
             data = FXCollections.observableArrayList(apiService.getData())
-            delay(TimeUnit.MINUTES.toMillis(10))
         }
     }
 
     fun updateConfig(event: ActionEvent){
         val rootPath = pathField?.text.toString()
-        val refreshTime = timeField?.text?.toInt()
+        val refreshTime = timeField?.text?.toLong()
         configuration.saveData(rootPath, refreshTime!!)
     }
 }

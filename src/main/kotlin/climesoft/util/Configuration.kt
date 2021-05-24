@@ -5,7 +5,7 @@ import java.io.File
 class Configuration {
 
     private var rootPath: String
-    private var refreshTime: Int
+    private var refreshTime: Long
     val fileName = javaClass.getResource("/config.txt")
 
     init {
@@ -13,14 +13,14 @@ class Configuration {
         configFile.bufferedReader().use {
             val pathTime = it.readText().split(";")
             this.rootPath = pathTime[0]
-            this.refreshTime = pathTime[1].toInt()
+            this.refreshTime = pathTime[1].toLong()
         }
     }
 
     fun getRootPath() = this.rootPath
     fun getRefreshTime() = this.refreshTime
 
-    fun saveData(path: String, time: Int){
+    fun saveData(path: String, time: Long){
         val configFile = File(fileName.toURI())
         configFile.bufferedWriter().use { out ->
             out.write("$path;$time")

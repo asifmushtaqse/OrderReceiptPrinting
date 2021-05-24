@@ -1,9 +1,11 @@
 package climesoft.service
 
 import climesoft.modal.OrderDetail
+import climesoft.util.saveTicket
+import climesoft.util.ticketExists
+import java.io.ByteArrayInputStream
 import javax.print.*
-import javax.print.event.PrintJobEvent
-import javax.print.event.PrintJobListener
+
 
 class PrintingService {
 
@@ -15,47 +17,26 @@ class PrintingService {
 
     fun printServiceAvailable() = printService != null
 
-    private fun printReceipt(receiptText: String, order: OrderDetail) {
+     fun printReceipt(receiptText: String, order: OrderDetail, printForcefully: Boolean = false) {
         if (printService != null) {
+
             val printJob = printService.createPrintJob()
-            val doc: Doc = SimpleDoc(receiptText, DocFlavor.STRING.TEXT_PLAIN, null)
+            val doc: Doc = SimpleDoc( ByteArrayInputStream(receiptText.toByteArray()), DocFlavor.INPUT_STREAM.AUTOSENSE, null)
             try {
-                printJob.print(doc, null)
-                printJob.addPrintJobListener(
-                        object : PrintJobListener{
-                            override fun printDataTransferCompleted(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun printJobCompleted(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun printJobFailed(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun printJobCanceled(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun printJobNoMoreEvents(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                            override fun printJobRequiresAttention(pje: PrintJobEvent?) {
-                                TODO("Not yet implemented")
-                            }
-
-                        }
-                )
+                if(!ticketExists((order.id + order.others.dirSuffix))){
+                    printJob.print(doc, null)
+                    saveTicket(receiptText, (order.id + order.others.dirSuffix))
+                }
+                if(printForcefully){
+                    printJob.print(doc, null)
+                }
             } catch (e: PrintException) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun prepareReceipt(order: OrderDetail){
+    fun prepareReceipt(order: OrderDetail, printForcefully: Boolean = false){
 
         var products = ""
         order.product.forEach {
@@ -114,6 +95,6 @@ Total Order: ${order.others.orderTotal}
 ---------------------------
 
         """
-        printReceipt(receiptText, order)
+        printReceipt(receiptText, order, printForcefully)
     }
 }
