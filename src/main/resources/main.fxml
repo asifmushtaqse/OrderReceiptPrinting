@@ -1,0 +1,24 @@
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<BorderPane fx:controller="climesoft.controller.MainController"
+            xmlns:fx="http://javafx.com/fxml"
+            styleClass="root">
+    <top>
+        <HBox spacing="10.0">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10" />
+            </padding>
+            <TextField prefWidth="600" fx:id="pathField" promptText="Enter Directory Path" />
+            <TextField fx:id="timeField" promptText="Enter Refresh Time" />
+            <Button onAction="#updateConfig" text="Update" />
+        </HBox>
+    </top>
+    <center>
+        <TableView fx:id="ordersTable">
+        </TableView>
+    </center>
+</BorderPane>
