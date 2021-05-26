@@ -1,5 +1,6 @@
 package climesoft.util
 
+import climesoft.Main
 import java.io.File
 import java.nio.file.Files
 
@@ -19,4 +20,8 @@ fun saveTicket(text: String, orderFolder: String){
 fun ticketExists(path: String): Boolean{
     val ticketPath = Configuration.instance.getRootPath() + path
     return Files.exists(File("$ticketPath/ticket.txt").toPath())
+}
+
+fun getRootDir(): String{
+    return File(Main::class.java.protectionDomain.codeSource.location.toURI().path).parent
 }

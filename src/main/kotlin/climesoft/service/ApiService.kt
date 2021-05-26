@@ -21,13 +21,25 @@ class ApiService {
 
     @DelicateCoroutinesApi
     fun getData(): ArrayList<OrderDetail> {
-        val input = getConnectFromUrl("https://freesnaps.co.uk/orders.php")
-        val reader = BufferedReader(InputStreamReader(input))
-        val jsonString = reader.readLine()
-        val json = Klaxon().parseArray<OrderDetail>(jsonString)
+        val json = readDataFromAllDomains()
         handleImages(json)
         printOrders(json)
         return json as ArrayList<OrderDetail>
+    }
+
+    private fun readDataFromAllDomains(): List<OrderDetail> {
+        val urls = arrayOf("https://freesnaps.com/orders.php", "https://freesnaps.co.uk/orders.php")
+        var allOrderList: List<OrderDetail> = ArrayList()
+        urls.forEach {
+            val input = getConnectFromUrl(it)
+            val reader = BufferedReader(InputStreamReader(input))
+            val jsonString = reader.readLine()
+            val json = Klaxon().parseArray<OrderDetail>(jsonString)
+            if (json != null) {
+                allOrderList = allOrderList.plus(json)
+            }
+        }
+        return allOrderList
     }
 
     private fun handleImages(json: List<OrderDetail>?) {
@@ -48,6 +60,7 @@ class ApiService {
                 orders?.forEach {
                     printServices.prepareReceipt(it)
                 }
+                printServices.printEnd()
             }
         }
     }

@@ -17,7 +17,7 @@ class PrintingService {
 
     fun printServiceAvailable() = printService != null
 
-     fun printReceipt(receiptText: String, order: OrderDetail, printForcefully: Boolean = false) {
+     private fun printReceipt(receiptText: String, order: OrderDetail, printForcefully: Boolean = false) {
         if (printService != null) {
 
             val printJob = printService.createPrintJob()
@@ -29,6 +29,7 @@ class PrintingService {
                 }
                 if(printForcefully){
                     printJob.print(doc, null)
+                    this.printEnd()
                 }
             } catch (e: PrintException) {
                 e.printStackTrace()
@@ -96,5 +97,15 @@ Total Order: ${order.others.orderTotal}
 
         """
         printReceipt(receiptText, order, printForcefully)
+    }
+
+    fun printEnd(){
+        printService?.let{
+            val printJob = it.createPrintJob()
+            val bytes = byteArrayOf(27, 100, 3)
+            val flavor: DocFlavor = DocFlavor.BYTE_ARRAY.AUTOSENSE
+            val doc: Doc = SimpleDoc(bytes, flavor, null)
+            printJob.print(doc, null)
+        }
     }
 }

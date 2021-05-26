@@ -6,10 +6,10 @@ class Configuration {
 
     private var rootPath: String
     private var refreshTime: Long
-    val fileName = javaClass.getResource("/config.txt")
+    private val configFilePath = getRootDir() + "/config.txt"
 
     init {
-        val configFile = File(fileName.toURI())
+        val configFile = File(configFilePath)
         configFile.bufferedReader().use {
             val pathTime = it.readText().split(";")
             this.rootPath = pathTime[0]
@@ -21,7 +21,7 @@ class Configuration {
     fun getRefreshTime() = this.refreshTime
 
     fun saveData(path: String, time: Long){
-        val configFile = File(fileName.toURI())
+        val configFile = File(configFilePath)
         configFile.bufferedWriter().use { out ->
             out.write("$path;$time")
             out.flush()
@@ -33,4 +33,5 @@ class Configuration {
     companion object {
         val instance = Configuration()
     }
+
 }

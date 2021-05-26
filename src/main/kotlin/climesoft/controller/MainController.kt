@@ -57,6 +57,9 @@ class MainController {
         while(true) {
             delay(TimeUnit.MINUTES.toMillis(configuration.getRefreshTime()))
             data = FXCollections.observableArrayList(apiService.getData())
+            ordersTable?.items?.clear()
+            data?.let { ordersTable?.items?.addAll(it) }
+            ordersTable?.refresh()
         }
     }
 

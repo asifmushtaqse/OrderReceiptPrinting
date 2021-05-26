@@ -12,6 +12,9 @@ import climesoft.modal.OrderDetail
 import climesoft.service.ApiService
 import climesoft.service.PrintingService
 import climesoft.util.Configuration
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.io.File
 
@@ -93,14 +96,20 @@ class TableColumns {
                     } else {
                         val orderItem = tableView.items[index]
                         btnTicket.onAction = EventHandler {
-                            PrintingService.instance.prepareReceipt(orderItem!!, true)
+                            orderItem?.let{
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    PrintingService.instance.prepareReceipt(it, true)
+                                }
+                            }
                         }
                         btnFolder.onAction = EventHandler {
                             Desktop.getDesktop().open(File(Configuration.instance.getRootPath() + "/${orderItem?.id}${orderItem?.others?.dirSuffix}"))
                         }
                         btnImages.onAction = EventHandler {
-                            if (orderItem != null) {
-                                ApiService().downloadOrderImages(orderItem, true)
+                            orderItem?.let{
+                                GlobalScope.launch(Dispatchers.IO){
+                                    ApiService().downloadOrderImages(it, true)
+                                }
                             }
                         }
                         graphic = vBox

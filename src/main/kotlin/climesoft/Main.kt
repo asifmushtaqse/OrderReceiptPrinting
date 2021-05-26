@@ -8,6 +8,7 @@ import javafx.stage.Stage
 import java.awt.Toolkit
 
 class Main: Application() {
+
     override fun start(primaryStage: Stage) {
         val root = FXMLLoader.load<Parent>(javaClass.getResource("/main.fxml"))
         val scene = Scene(root, getWidthHeight()[0], getWidthHeight()[1])
