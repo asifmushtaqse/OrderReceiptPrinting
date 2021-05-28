@@ -60,7 +60,6 @@ class ApiService {
                 orders?.forEach {
                     printServices.prepareReceipt(it)
                 }
-                printServices.printEnd()
             }
         }
     }

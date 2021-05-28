@@ -5,12 +5,12 @@ plugins {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'main.Main'
+                'Main-Class': 'climesoft.Main'
         )
     }
 }
 
-group 'org.example'
+group 'org.climesoft'
 version '1.0-SNAPSHOT'
 
 repositories {

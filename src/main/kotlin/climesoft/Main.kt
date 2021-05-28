@@ -7,6 +7,7 @@ import javafx.scene.Scene
 import javafx.stage.Stage
 import java.awt.Toolkit
 
+
 class Main: Application() {
 
     override fun start(primaryStage: Stage) {
