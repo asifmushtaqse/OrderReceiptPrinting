@@ -32,7 +32,7 @@ class PrintingService {
         if (printService != null) {
 
             val printJob = printService.createPrintJob()
-            val doc: Doc = SimpleDoc( ByteArrayInputStream(receiptText.toByteArray()), DocFlavor.INPUT_STREAM.AUTOSENSE, null)
+            val doc: Doc = SimpleDoc( receiptText.toByteArray(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null)
             try {
                 order?.let{
                     if(!ticketExists((order.id + order.others.dirSuffix))){
@@ -55,6 +55,13 @@ class PrintingService {
         p.resetAll()
         p.initialize()
         p.feedBack(2.toByte())
+        p.alignCenter()
+        p.chooseFont(3)
+        p.setText("Order Number: ${order.id}")
+        p.newLine()
+        p.newLine()
+        p.alignLeft()
+        p.chooseFont(1)
         p.setText("Order Info")
         p.newLine()
         p.setText("Order Number: ${order.id}")
@@ -88,9 +95,9 @@ class PrintingService {
         p.addLineSeperator()
         p.setText("Shipping Address:")
         p.newLine()
-        p.setText(order.shipping.address1)
-        p.newLine()
         p.setText("${order.shipping.firstName} ${order.shipping.lastName}")
+        p.newLine()
+        p.setText(order.shipping.address1)
         p.newLine()
         if (order.shipping.address2.isNotEmpty()) {
             p.setText(order.shipping.address2)
@@ -114,7 +121,12 @@ class PrintingService {
         p.setText("Taxes: ${order.others.shippingTax}")
         p.newLine()
         p.setText("Total Order: ${order.others.orderTotal}")
-        p.addLineSeperator()
+        p.newLine()
+        p.newLine()
+        p.alignCenter()
+        p.chooseFont(3)
+        p.setText("Order Number: ${order.id}")
+        p.newLine()
         p.feed(3.toByte())
         p.finit()
         printReceipt(p.finalCommandSet(), order, printForcefully)
